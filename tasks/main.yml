@@ -20,7 +20,7 @@
 - name: Download mysqld_exporter binary to local folder
   become: false
   get_url:
-    url: "https://github.com/prometheus/mysqld_exporter/releases/download/v{{ mysqld_exporter_version }}/mysqld_exporter-{{ mysqld_exporter_version }}.linux-{{ go_arch_map[ansible_architecture] | default(ansible_architecture) }}.tar.gz"
+    url: "{{ mysqld_exporter_download_url }}{{ mysqld_exporter_version }}/mysqld_exporter-{{ mysqld_exporter_version }}.linux-{{ go_arch_map[ansible_architecture] | default(ansible_architecture) }}.tar.gz"
     dest: "/tmp/mysqld_exporter-{{ mysqld_exporter_version }}.linux-{{ go_arch_map[ansible_architecture] | default(ansible_architecture) }}.tar.gz"
     checksum: "sha256:{{ __mysqld_exporter_checksum }}"
   register: _download_binary
