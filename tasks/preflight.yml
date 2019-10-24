@@ -32,4 +32,6 @@
     __mysqld_exporter_checksum: "{{ item.split(' ')[0] }}"
   with_items:
     - "{{ lookup('url', mysqld_exporter_download_url + mysqld_exporter_version + '/sha256sums.txt', wantlist=True) | list }}"
-  when: "('linux-' + (go_arch_map[ansible_architecture] | default(ansible_architecture)) + '.tar.gz') in item"
+  when:
+    - mysqld_exporter_checksum is not defined
+    - "('linux-' + (go_arch_map[ansible_architecture] | default(ansible_architecture)) + '.tar.gz') in item"
