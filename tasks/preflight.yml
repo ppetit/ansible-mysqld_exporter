@@ -27,11 +27,16 @@
   when: item in mysqld_exporter_collect
   with_items: "{{ mysqld_exporter_no_collect }}"
 
-- name: "Get checksum for {{ go_arch_map[ansible_architecture] | default(ansible_architecture) }} architecture"
+- name: Get checksum list from repo
+  set_fact:
+    _checksums: "{{ lookup('url', mysqld_exporter_download_url + mysqld_exporter_version + '/sha256sums.txt', wantlist=True) | list }}"
+  run_once: true
+  when: mysqld_exporter_checksum is not defined
+
+- name: "Get checksum for {{ go_arch }} architecture"
   set_fact:
     mysqld_exporter_checksum: "{{ item.split(' ')[0] }}"
-  with_items:
-    - "{{ lookup('url', mysqld_exporter_download_url + mysqld_exporter_version + '/sha256sums.txt', wantlist=True) | list }}"
+  with_items: "{{ _checksums }}"
   when:
     - mysqld_exporter_checksum is not defined
-    - "('linux-' + (go_arch_map[ansible_architecture] | default(ansible_architecture)) + '.tar.gz') in item"
+    - "('linux-' + go_arch + '.tar.gz') in item"

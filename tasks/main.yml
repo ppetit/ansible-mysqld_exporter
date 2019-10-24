@@ -20,8 +20,8 @@
 - name: Download mysqld_exporter binary to local folder
   become: false
   get_url:
-    url: "{{ mysqld_exporter_download_url }}{{ mysqld_exporter_version }}/mysqld_exporter-{{ mysqld_exporter_version }}.linux-{{ go_arch_map[ansible_architecture] | default(ansible_architecture) }}.tar.gz"
-    dest: "/tmp/mysqld_exporter-{{ mysqld_exporter_version }}.linux-{{ go_arch_map[ansible_architecture] | default(ansible_architecture) }}.tar.gz"
+    url: "{{ mysqld_exporter_download_url }}{{ mysqld_exporter_version }}/mysqld_exporter-{{ mysqld_exporter_version }}.linux-{{ go_arch }}.tar.gz"
+    dest: "/tmp/mysqld_exporter-{{ mysqld_exporter_version }}.linux-{{ go_arch }}.tar.gz"
     checksum: "sha256:{{ mysqld_exporter_checksum | default(omit) }}"
     url_username: "{{ exporter_download_auth.username | default(omit) }}"
     url_password: "{{ exporter_download_auth.password | default(omit) }}"

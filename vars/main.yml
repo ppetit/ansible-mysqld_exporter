@@ -8,3 +8,5 @@ go_arch_map:
 
 __mysqld_exporter_user: mysqld-exp
 __mysqld_exporter_group: mysqld-exp
+
+go_arch: "{{ go_arch_map[ansible_architecture] | default(ansible_architecture) }}"
