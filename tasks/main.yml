@@ -22,7 +22,11 @@
   get_url:
     url: "{{ mysqld_exporter_download_url }}{{ mysqld_exporter_version }}/mysqld_exporter-{{ mysqld_exporter_version }}.linux-{{ go_arch_map[ansible_architecture] | default(ansible_architecture) }}.tar.gz"
     dest: "/tmp/mysqld_exporter-{{ mysqld_exporter_version }}.linux-{{ go_arch_map[ansible_architecture] | default(ansible_architecture) }}.tar.gz"
-    checksum: "sha256:{{ __mysqld_exporter_checksum }}"
+    checksum: "sha256:{{ mysqld_exporter_checksum | default(omit) }}"
+    url_username: "{{ exporter_download_auth.username | default(omit) }}"
+    url_password: "{{ exporter_download_auth.password | default(omit) }}"
+    validate_certs: "{{ exporter_download_auth.validate_certs | default(true) }}"
+  
   register: _download_binary
   until: _download_binary is succeeded
   retries: 5
