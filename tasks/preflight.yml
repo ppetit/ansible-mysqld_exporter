@@ -27,10 +27,34 @@
   when: item in mysqld_exporter_collect
   with_items: "{{ mysqld_exporter_no_collect }}"
 
+- block:
+    - name: Get latest release
+      uri:
+        url: "https://api.github.com/repos/prometheus/mysqld_exporter/releases/latest"
+        method: GET
+        return_content: true
+        status_code: 200
+        body_format: json
+        validate_certs: false
+        user: "{{ lookup('env', 'GH_USER') | default(omit) }}"
+        password: "{{ lookup('env', 'GH_TOKEN') | default(omit) }}"
+      no_log: "{{ not lookup('env', 'MOLECULE_DEBUG') | bool }}"
+      register: _latest_release
+      until: _latest_release.status == 200
+      retries: 5
+
+    - name: "Set haproxy_exporter version to {{ _latest_release.json.tag_name[1:] }}"
+      set_fact:
+        mysqld_exporter_version: "{{ _latest_release.json.tag_name[1:] }}"
+  when: mysqld_exporter_version == "latest"
+  delegate_to: localhost
+  run_once: true
+
 - name: Get checksum list from repo
   set_fact:
     _checksums: "{{ lookup('url', mysqld_exporter_download_url + mysqld_exporter_version + '/sha256sums.txt', wantlist=True) | list }}"
   run_once: true
+  delegate_to: localhost
   when: mysqld_exporter_checksum is not defined
 
 - name: "Get checksum for {{ go_arch }} architecture"
